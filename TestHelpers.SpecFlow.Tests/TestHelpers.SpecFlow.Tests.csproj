@@ -65,12 +65,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Features\GetAndSet.feature.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GetAndSet.feature</DependentUpon>
+    </Compile>
+    <Compile Include="Features\InjectedContextSteps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpecFlowExtensionsTests.cs" />
     <Compile Include="_TestHelpers\ObjectBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Features\GetAndSet.feature">
+      <Generator>SpecFlowSingleFileGenerator</Generator>
+      <LastGenOutput>GetAndSet.feature.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

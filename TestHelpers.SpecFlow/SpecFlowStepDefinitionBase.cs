@@ -3,31 +3,41 @@ using TechTalk.SpecFlow;
 
 namespace TestHelpers.SpecFlow
 {
-    public class SpecFlowStepDefinitionBase
+    [Binding]
+    public abstract class SpecFlowStepDefinitionBase
     {
-        public T Get<T>(string key = null)
+        private readonly ScenarioContext scenarioContext;
+
+        protected SpecFlowStepDefinitionBase(ScenarioContext scenarioContext)
+        {
+            this.scenarioContext = scenarioContext;
+        }
+        
+        protected T Get<T>(string key = null)
         {
             var qualifiedKey = GenerateKey<T>(key);
-            T value;
-            if (ScenarioContext.Current.TryGetValue<T>(qualifiedKey, out value))
+            if (scenarioContext.TryGetValue<T>(qualifiedKey, out T value))
             {
                 return value;
             }
             throw new ArgumentOutOfRangeException(qualifiedKey, "Nothing is setup for key " + qualifiedKey);
         }
 
-        public T GetOrSet<T>(string key, T defaultInstance)
+        protected T GetOrSet<T>(string key, T defaultInstance)
         {
             var qualifiedKey = GenerateKey<T>(key);
-            T value;
-            return ScenarioContext.Current.TryGetValue<T>(qualifiedKey, out value) ? value : Set(defaultInstance, key);
+            return scenarioContext.TryGetValue<T>(qualifiedKey, out T value) ? value : Set(defaultInstance, key);
         }
 
-        public T GetWithDefault<T>(T defaultValue, string key = null)
+        protected T GetOrSet<T>(T defaultInstance)
+        {
+            return GetOrSet<T>(null, defaultInstance);
+        }
+
+        protected T GetWithDefault<T>(T defaultValue, string key = null)
         {
             var qualifiedKey = GenerateKey<T>(key);
-            T value;
-            if (ScenarioContext.Current.TryGetValue<T>(qualifiedKey, out value))
+            if (scenarioContext.TryGetValue<T>(qualifiedKey, out T value))
             {
                 return value;
             }
@@ -35,11 +45,10 @@ namespace TestHelpers.SpecFlow
             return defaultValue;
         }
 
-        public T GetOrDefault<T>(Func<T> defaultValue = null, string key = null)
+        protected T GetOrDefault<T>(Func<T> defaultValue = null, string key = null)
         {
             var qualifiedKey = GenerateKey<T>(key);
-            T value;
-            if (ScenarioContext.Current.TryGetValue<T>(qualifiedKey, out value))
+            if (scenarioContext.TryGetValue<T>(qualifiedKey, out T value))
             {
                 return value;
             }
@@ -47,10 +56,10 @@ namespace TestHelpers.SpecFlow
             return defaultValue != null ? defaultValue() : default(T);
         }
 
-        public T Set<T>(T value, string key = null)
+        protected T Set<T>(T value, string key = null)
         {
             var qualifiedKey = GenerateKey<T>(key);
-            ScenarioContext.Current.Set(value, qualifiedKey);
+            scenarioContext.Set(value, qualifiedKey);
             return value;
         }
 
