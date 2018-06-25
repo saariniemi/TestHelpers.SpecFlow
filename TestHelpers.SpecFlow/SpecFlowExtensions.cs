@@ -9,9 +9,18 @@ namespace TestHelpers.SpecFlow
             this TableRow tableRow,
             string columnName)
         {
+            var type = typeof(T);
+
             if (tableRow.ContainsKey(columnName))
             {
-                return (T)Convert.ChangeType(tableRow[columnName], typeof(T));
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    if (string.IsNullOrEmpty(tableRow[columnName])
+                    {
+                        return null;
+                    }
+                }  
+                return (T)Convert.ChangeType(tableRow[columnName], type);
             }
 
             throw new ArgumentException($"There is no column named {columnName}");
